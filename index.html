@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>LAB Gradient Maker</title>
+		<style>
+			* {
+				box-sizing: border-box;
+				font-family: monospace;
+			}
+
+			body {
+				padding: 20px;
+			}
+
+			#controls {
+				display: grid;
+				grid-template-columns: repeat(5, 1fr);
+				gap: 10px;
+				margin-top: 40px;
+			}
+
+			#visual {
+				display: grid;
+				grid-template-columns: repeat(10, 1fr);
+				gap: 2px;
+				margin-top: 40px;
+			}
+
+			#text {
+				display: block;
+				padding: 20px;
+				font-size: 2em;
+				width: 100%;
+				height: 400px;
+				margin-top: 40px;
+				border: 1px solid lightgray;
+				border-radius: 8px;
+			}
+
+			/* One Step */
+			.oneStep {
+				width: 100%;
+			}
+			.thumbnail {
+				width: 100%;
+				height: 100px;
+			}
+			.hslValue {
+			}
+			.labValue {
+			}
+
+			button .minus {
+				margin-right: 0;
+			}
+		</style>
+		<script>
+			window.onload = function () {
+				const generateGradient = document.getElementById('generateGradient');
+				generateGradient.addEventListener('click', refreshGradient);
+
+				refreshGradient();
+			};
+
+			let gradientData = [];
+
+			function refreshGradient() {
+				const visual = document.getElementById('visual');
+				const text = document.getElementById('text');
+
+				const mainHue = document.getElementById('mainHue').value;
+				const mainSat = document.getElementById('mainSat').value;
+				const lightnessSteps = document.getElementById('lightnessSteps').value;
+				const CSSPrefix = document.getElementById('CSSPrefix').value;
+
+				for (let i = 0; i < lightnessSteps; i++) {
+					const lightnessStepID = Math.round((i * 100) / (lightnessSteps - 1));
+					const step = {
+						h: mainHue,
+						s: mainSat,
+						l: lightnessStepID,
+					};
+
+					gradientData.push(step);
+					visual.innerHTML += makeOneVisual(step, i);
+					text.innerHTML +=
+						makeOneText(step, lightnessStepID, CSSPrefix) + '\n';
+				}
+			}
+
+			function makeOneVisual(colorData, idPrefix) {
+				console.log(colorData);
+				const color = `hsl(${colorData.h}, ${colorData.s}%, ${colorData.l}%)`;
+				const oneStep = `
+					<div class="oneStep" id="gradient-step-${idPrefix}">
+						<div class="thumbnail" style="background-color: ${color}"></div>
+						<div class="hslValue">${color}</div>
+						<div class="labValue">${idPrefix}</div>
+						<button class="minus">h-</button><button>h+</button>
+						<button class="minus">s-</button><button>s+</button>
+						<button class="minus">l-</button><button>l+</button>
+					</div>
+				`;
+				return oneStep;
+			}
+
+			function makeOneText(colorData, idPrefix, CSSPrefix) {
+				const color = `hsl(${colorData.h}, ${colorData.s}%, ${colorData.l}%)`;
+				const oneText = `${CSSPrefix}${idPrefix}: ${color};`;
+				return oneText;
+			}
+		</script>
+	</head>
+	<body>
+		<h1>LAB Gradient Maker</h1>
+		<div id="controls">
+			<span>
+				<label for="mainHue">Main Hue:</label>
+				<input type="number" id="mainHue" min="0" max="360" value="200" />
+			</span>
+
+			<span>
+				<label for="mainSat">Main Saturation:</label>
+				<input type="number" id="mainSat" min="0" max="100" value="100" />
+			</span>
+
+			<span>
+				<label for="lightnessSteps">Lightness Steps:</label>
+				<input type="number" id="lightnessSteps" min="2" max="100" value="10" />
+			</span>
+
+			<span>
+				<label for="lightnessStart">Lightness Start:</label>
+				<input type="number" id="lightnessStart" min="0" max="100" value="10" />
+			</span>
+
+			<span>
+				<label for="CSS Prefix">CSS Prefix:</label>
+				<input type="text" id="CSSPrefix" value="--color-" />
+			</span>
+			<button id="generateGradient">Generate Gradient</button>
+		</div>
+		<div id="visual"></div>
+		<textarea id="text"></textarea>
+	</body>
+</html>
