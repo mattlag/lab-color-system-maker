@@ -15,24 +15,32 @@
 			}
 
 			#controls {
-				display: grid;
-				grid-template-columns: repeat(5, 1fr);
-				gap: 10px;
 				margin-top: 40px;
+			}
+
+			#controls span {
+				display: inline-block;
+				margin-right: 30px;
+			}
+
+			#controls input[type='number'] {
+				padding: 0px 0px 0px 2px;
+				width: 60px;
 			}
 
 			#visual {
 				display: grid;
-				grid-template-columns: repeat(10, 1fr);
-				gap: 2px;
+				grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+				column-gap: 2px;
+				row-gap: 20px;
 				margin-top: 40px;
 			}
 
 			#text {
 				display: block;
 				padding: 20px;
-				font-size: 2em;
-				width: 100%;
+				font-size: 1em;
+				width: 300px;
 				height: 400px;
 				margin-top: 40px;
 				border: 1px solid lightgray;
@@ -43,74 +51,49 @@
 			.oneStep {
 				width: 100%;
 			}
+
 			.thumbnail {
 				width: 100%;
 				height: 100px;
+				padding: 8px;
 			}
-			.hslValue {
+
+			.small {
+				font-size: 0.8em;
 			}
-			.labValue {
+
+			.readout {
+				display: inline-block;
+				width: 30px;
+				padding: 2px 8px 2px 2px;
+				text-align: right;
+			}
+
+			.topMargin {
+				margin-top: 8px;
+			}
+
+			.oneStep button {
+				width: 16px;
+				height: 16px;
+				padding: 0px;
+				font-size: 0.8em;
 			}
 
 			button .minus {
 				margin-right: 0;
 			}
 		</style>
+
+		<script src="mColor.js"></script>
+		<script src="script.js"></script>
 		<script>
 			window.onload = function () {
 				const generateGradient = document.getElementById('generateGradient');
-				generateGradient.addEventListener('click', refreshGradient);
-
-				refreshGradient();
+				generateGradient.addEventListener('click', resetInitialGradient);
+				resetInitialGradient();
 			};
-
 			let gradientData = [];
-
-			function refreshGradient() {
-				const visual = document.getElementById('visual');
-				const text = document.getElementById('text');
-
-				const mainHue = document.getElementById('mainHue').value;
-				const mainSat = document.getElementById('mainSat').value;
-				const lightnessSteps = document.getElementById('lightnessSteps').value;
-				const CSSPrefix = document.getElementById('CSSPrefix').value;
-
-				for (let i = 0; i < lightnessSteps; i++) {
-					const lightnessStepID = Math.round((i * 100) / (lightnessSteps - 1));
-					const step = {
-						h: mainHue,
-						s: mainSat,
-						l: lightnessStepID,
-					};
-
-					gradientData.push(step);
-					visual.innerHTML += makeOneVisual(step, i);
-					text.innerHTML +=
-						makeOneText(step, lightnessStepID, CSSPrefix) + '\n';
-				}
-			}
-
-			function makeOneVisual(colorData, idPrefix) {
-				console.log(colorData);
-				const color = `hsl(${colorData.h}, ${colorData.s}%, ${colorData.l}%)`;
-				const oneStep = `
-					<div class="oneStep" id="gradient-step-${idPrefix}">
-						<div class="thumbnail" style="background-color: ${color}"></div>
-						<div class="hslValue">${color}</div>
-						<div class="labValue">${idPrefix}</div>
-						<button class="minus">h-</button><button>h+</button>
-						<button class="minus">s-</button><button>s+</button>
-						<button class="minus">l-</button><button>l+</button>
-					</div>
-				`;
-				return oneStep;
-			}
-
-			function makeOneText(colorData, idPrefix, CSSPrefix) {
-				const color = `hsl(${colorData.h}, ${colorData.s}%, ${colorData.l}%)`;
-				const oneText = `${CSSPrefix}${idPrefix}: ${color};`;
-				return oneText;
-			}
 		</script>
 	</head>
 	<body>
@@ -127,13 +110,13 @@
 			</span>
 
 			<span>
-				<label for="lightnessSteps">Lightness Steps:</label>
-				<input type="number" id="lightnessSteps" min="2" max="100" value="10" />
+				<label for="lightnessStart">Lightness Start:</label>
+				<input type="number" id="lightnessStart" min="0" max="100" value="10" />
 			</span>
 
 			<span>
-				<label for="lightnessStart">Lightness Start:</label>
-				<input type="number" id="lightnessStart" min="0" max="100" value="10" />
+				<label for="lightnessStep">Lightness Step:</label>
+				<input type="number" id="lightnessStep" min="1" max="100" value="10" />
 			</span>
 
 			<span>
