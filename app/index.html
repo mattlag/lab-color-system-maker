@@ -36,11 +36,12 @@
 				margin-top: 40px;
 			}
 
-			#text {
-				display: block;
+			#outputCSS,
+			#outputJSON {
+				display: inline-block;
 				padding: 20px;
 				font-size: 1em;
-				width: 300px;
+				width: 400px;
 				height: 400px;
 				margin-top: 40px;
 				border: 1px solid lightgray;
@@ -120,12 +121,19 @@
 			</span>
 
 			<span>
-				<label for="CSS Prefix">CSS Prefix:</label>
-				<input type="text" id="CSSPrefix" value="--color-" />
+				<label for="colorName">Color Name:</label>
+				<input type="text" id="colorName" value="color" />
 			</span>
+
+			<span>
+				<label for="variablePrefix">Variable Prefix:</label>
+				<input type="text" id="variablePrefix" value="l" />
+			</span>
+
 			<button id="generateGradient">Generate Gradient</button>
 		</div>
 		<div id="visual"></div>
-		<textarea id="text"></textarea>
+		<textarea id="outputCSS"></textarea>
+		<textarea id="outputJSON"></textarea>
 	</body>
 </html>

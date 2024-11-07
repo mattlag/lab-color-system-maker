@@ -52,6 +52,10 @@ function updateStepData(positionID, deltaH = 0, deltaS = 0, deltaL = 0) {
 	if (deltaS) step.s += deltaS;
 	if (deltaL) step.l += deltaL;
 
+	step.h = Math.max(Math.min(step.h, 360), 0);
+	step.s = Math.max(Math.min(step.s, 100), 0);
+	step.l = Math.max(Math.min(step.l, 100), 0);
+
 	const rgb = HSLtoRGB({ h: step.h / 360, s: step.s / 100, l: step.l / 100 });
 	// console.log(rgb);
 	const m_color = new mColor(rgb);
@@ -65,13 +69,19 @@ function updateStepData(positionID, deltaH = 0, deltaS = 0, deltaL = 0) {
 function refreshFromGradientData() {
 	const visual = document.getElementById('visual');
 	visual.innerHTML = '';
-	const text = document.getElementById('text');
-	text.innerHTML = '';
-	const CSSPrefix = document.getElementById('CSSPrefix').value;
+	const outputCSS = document.getElementById('outputCSS');
+	outputCSS.innerHTML = '';
+	const outputJSON = document.getElementById('outputJSON');
+	outputJSON.innerHTML = '';
+	const colorName = document.getElementById('colorName').value;
+	const variablePrefix = document.getElementById('variablePrefix').value;
 	gradientData.forEach((step, i) => {
 		visual.innerHTML += makeOneVisual(step, i);
-		text.innerHTML = makeOneText(step, CSSPrefix) + '\n' + text.innerHTML;
+		outputCSS.innerHTML = makeOneValueCSS(step, colorName, variablePrefix) + '\n' + outputCSS.innerHTML;
+		outputJSON.innerHTML = makeOneValueJSON(step, variablePrefix) + '\n' + outputJSON.innerHTML;
 	});
+
+	outputJSON.innerHTML = `${colorName}: {\n${outputJSON.innerHTML}}`;
 }
 
 function makeOneVisual(colorData, position) {
@@ -115,10 +125,18 @@ function makeOneVisual(colorData, position) {
 	return oneStep;
 }
 
-function makeOneText(colorData, CSSPrefix) {
+function makeOneValueCSS(colorData, colorName, variablePrefix) {
 	let stepID = '' + colorData.stepID;
 	if (stepID.length === 1) stepID = `0${stepID}`;
 	const color = `hsl(${colorData.h}, ${colorData.s}%, ${colorData.l}%)`;
-	const oneText = `${CSSPrefix}${stepID}: ${color};`;
-	return oneText;
+	const value = `--${colorName}-${variablePrefix}${stepID}: ${color};`;
+	return value;
+}
+
+function makeOneValueJSON(colorData, variablePrefix) {
+	let stepID = '' + colorData.stepID;
+	if (stepID.length === 1) stepID = `0${stepID}`;
+	const color = `hsl(${colorData.h}, ${colorData.s}%, ${colorData.l}%)`;
+	const value = `  ${variablePrefix}${stepID}: '${color}',`;
+	return value;
 }
