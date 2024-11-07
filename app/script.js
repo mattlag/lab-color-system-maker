@@ -70,7 +70,7 @@ function refreshFromGradientData() {
 	const CSSPrefix = document.getElementById('CSSPrefix').value;
 	gradientData.forEach((step, i) => {
 		visual.innerHTML += makeOneVisual(step, i);
-		text.innerHTML += makeOneText(step, CSSPrefix) + '\n';
+		text.innerHTML = makeOneText(step, CSSPrefix) + '\n' + text.innerHTML;
 	});
 }
 
@@ -100,7 +100,7 @@ function makeOneVisual(colorData, position) {
 			</div>
 			<div class="topMargin">
 				<span class="small readout">${colorData.stepID}</span>
-				:step
+				:hsl
 			</div>
 			<div>
 				<span class="small readout">${Math.round(colorData.lightnessLab * 100)}</span>
