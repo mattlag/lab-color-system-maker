@@ -4,106 +4,36 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>LAB Gradient Maker</title>
-		<style>
-			* {
-				box-sizing: border-box;
-				font-family: monospace;
-			}
-
-			body {
-				padding: 20px;
-			}
-
-			#controls {
-				margin-top: 40px;
-			}
-
-			#controls span {
-				display: inline-block;
-				margin-right: 30px;
-			}
-
-			#controls input[type='number'] {
-				padding: 0px 0px 0px 2px;
-				width: 60px;
-			}
-
-			#visual {
-				display: grid;
-				grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-				column-gap: 2px;
-				row-gap: 20px;
-				margin-top: 40px;
-			}
-
-			#outputCSS,
-			#outputJSON {
-				display: inline-block;
-				padding: 20px;
-				font-size: 1em;
-				width: 400px;
-				height: 400px;
-				margin-top: 40px;
-				border: 1px solid lightgray;
-				border-radius: 8px;
-			}
-
-			/* One Step */
-			.oneStep {
-				width: 100%;
-			}
-
-			.thumbnail {
-				width: 100%;
-				height: 100px;
-				padding: 8px;
-			}
-
-			.small {
-				font-size: 0.8em;
-			}
-
-			.readout {
-				display: inline-block;
-				width: 30px;
-				padding: 2px 8px 2px 2px;
-				text-align: right;
-			}
-
-			.topMargin {
-				margin-top: 8px;
-			}
-
-			.oneStep button {
-				width: 16px;
-				height: 16px;
-				padding: 0px;
-				font-size: 0.8em;
-			}
-
-			button .minus {
-				margin-right: 0;
-			}
-		</style>
-
+		<link rel="stylesheet" href="style.css"></link>
 		<script src="mColor.js"></script>
 		<script src="script.js"></script>
 		<script>
 			window.onload = function () {
 				const generateGradient = document.getElementById('generateGradient');
-				generateGradient.addEventListener('click', resetInitialGradient);
-				resetInitialGradient();
+				generateGradient.addEventListener('click', recalculateAllGradients);
+				recalculateAllGradients();
 			};
-			let gradientData = [];
+
+			const gradients = [
+				{
+					hue: 200,
+					name: 'blue',
+					showInputs: true,
+					steps: [],
+				},
+				{
+					hue: 100,
+					name: 'green',
+					showInputs: true,
+					steps: [],
+				},
+			];
+
 		</script>
 	</head>
 	<body>
 		<h1>LAB Gradient Maker</h1>
 		<div id="controls">
-			<span>
-				<label for="mainHue">Main Hue:</label>
-				<input type="number" id="mainHue" min="0" max="360" value="200" />
-			</span>
 
 			<span>
 				<label for="mainSat">Main Saturation:</label>
@@ -118,11 +48,6 @@
 			<span>
 				<label for="lightnessStep">Lightness Step:</label>
 				<input type="number" id="lightnessStep" min="1" max="100" value="10" />
-			</span>
-
-			<span>
-				<label for="colorName">Color Name:</label>
-				<input type="text" id="colorName" value="color" />
 			</span>
 
 			<span>
