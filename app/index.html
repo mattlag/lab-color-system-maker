@@ -4,37 +4,26 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>LAB Gradient Maker</title>
-		<link rel="stylesheet" href="style.css"></link>
+		<link rel="stylesheet" href="style.css" />
 		<script src="mColor.js"></script>
+		<script src="gradient.js"></script>
+		<script src="outputs.js"></script>
 		<script src="script.js"></script>
 		<script>
+			const gradients = [];
+
 			window.onload = function () {
 				const generateGradient = document.getElementById('generateGradient');
 				generateGradient.addEventListener('click', recalculateAllGradients);
+				gradients.push(new Gradient({ hue: 200, name: 'blue' }));
+				gradients.push(new Gradient({ hue: 100, name: 'green' }));
 				recalculateAllGradients();
 			};
-
-			const gradients = [
-				{
-					hue: 200,
-					name: 'blue',
-					showInputs: true,
-					steps: [],
-				},
-				{
-					hue: 100,
-					name: 'green',
-					showInputs: true,
-					steps: [],
-				},
-			];
-
 		</script>
 	</head>
 	<body>
 		<h1>LAB Gradient Maker</h1>
 		<div id="controls">
-
 			<span>
 				<label for="mainSat">Main Saturation:</label>
 				<input type="number" id="mainSat" min="0" max="100" value="100" />
@@ -55,9 +44,12 @@
 				<input type="text" id="variablePrefix" value="l" />
 			</span>
 
-			<button id="generateGradient">Generate Gradient</button>
+			<button id="generateGradient">refresh</button>
 		</div>
 		<div id="visual"></div>
+		<br />
+		<button id="addGradient" onclick="addGradient();">add gradient</button>
+		<br />
 		<textarea id="outputCSS"></textarea>
 		<textarea id="outputJSON"></textarea>
 	</body>

@@ -9,80 +9,30 @@ function recalculateAllGradients() {
 
 	console.log(gradients);
 
-	gradients.forEach((gradient) => recalculateGradient(gradient, mainSat, lightnessStart, lightnessStep));
+	gradients.forEach((gradient) => gradient.recalculate(mainSat, lightnessStart, lightnessStep));
 
 	const columnCount = Math.floor((100 - lightnessStart) / lightnessStep);
 	const gradientsArea = document.getElementById('visual');
 	gradientsArea.style.gridTemplateColumns = `repeat(${columnCount}, minmax(80px, 1fr))`;
 
-	refreshFromGradientData();
+	refreshGradients();
 }
 
-function recalculateGradient(gradient, mainSat, lightnessStart, lightnessStep) {
-	console.log('recalculateGradient');
-	console.log(gradient);
-	const hueFraction = gradient.hue / 360;
-	console.log(`hueFraction = ${hueFraction}`);
-	const satFraction = mainSat / 100;
-	console.log(`satFraction = ${satFraction}`);
+function addGradient() {
+	const mainSat = document.getElementById('mainSat').value * 1;
+	console.log(`mainSat = ${mainSat}`);
+	const lightnessStep = document.getElementById('lightnessStep').value * 1;
+	console.log(`lightnessStep = ${lightnessStep}`);
+	const lightnessStart = document.getElementById('lightnessStart').value * 1;
+	console.log(`lightnessStart = ${lightnessStart}`);
 
-	let position = 0;
-	for (let mainLightness = lightnessStart; mainLightness < 100; mainLightness += lightnessStep) {
-		console.log(`\nSTEP ${position}`);
-		console.log(`mainLightness = ${mainLightness}`);
-
-		const step = makeStepData(hueFraction, satFraction, mainLightness / 100, mainLightness);
-		gradient.steps[position] = step;
-		position++;
-	}
-
-	console.log(gradient);
+	const newGradient = new Gradient();
+	newGradient.recalculate(mainSat, lightnessStart, lightnessStep);
+	gradients.push(newGradient);
+	refreshGradients();
 }
 
-function makeStepData(hue, saturation, lightness, stepID) {
-	const rgb = HSLtoRGB({ h: hue, s: saturation, l: lightness });
-	// console.log(rgb);
-
-	const m_color = new mColor(rgb);
-
-	const step = {
-		h: Math.round(hue * 360),
-		s: Math.round(saturation * 100),
-		l: Math.round(lightness * 100),
-		stepID: stepID,
-		lightnessLab: m_color.getLightness('lab'),
-		lightnessSRGB: m_color.getLightness('srgb'),
-	};
-
-	return step;
-}
-
-function updateStepData(positionID, deltaH = 0, deltaS = 0, deltaL = 0) {
-	const step = gradients[0].steps[positionID];
-	if (deltaH) step.h += deltaH;
-	if (deltaS) step.s += deltaS;
-	if (deltaL) step.l += deltaL;
-
-	step.h = Math.max(Math.min(step.h, 360), 0);
-	step.s = Math.max(Math.min(step.s, 100), 0);
-	step.l = Math.max(Math.min(step.l, 100), 0);
-
-	const rgb = HSLtoRGB({ h: step.h / 360, s: step.s / 100, l: step.l / 100 });
-	// console.log(rgb);
-	const m_color = new mColor(rgb);
-
-	step.lightnessLab = m_color.getLightness('lab');
-	step.lightnessSRGB = m_color.getLightness('srgb');
-
-	refreshFromGradientData();
-}
-
-function toggleInputs(gradientID) {
-	gradients[gradientID].showInputs = !gradients[gradientID].showInputs;
-	refreshFromGradientData();
-}
-
-function refreshFromGradientData() {
+function refreshGradients() {
 	const visual = document.getElementById('visual');
 	visual.innerHTML = '';
 	const outputCSS = document.getElementById('outputCSS');
@@ -123,18 +73,18 @@ function makeOneGradientStep(colorData, position, gradientData, gradientID) {
 		oneStep += `
 			<div class="topMargin">
 				<span class="small readout">${colorData.h}</span>
-				<button onclick="updateStepData(${position}, -1, 0, 0);" class="minus">h-</button>
-				<button onclick="updateStepData(${position}, 1, 0, 0);">h+</button>
+				<button onclick="updateStepData(${gradientID}, ${position}, -1, 0, 0);" class="minus">h-</button>
+				<button onclick="updateStepData(${gradientID}, ${position}, 1, 0, 0);">h+</button>
 			</div>
 			<div>
 				<span class="small readout">${colorData.s}</span>
-				<button onclick="updateStepData(${position}, 0, -1, 0);" class="minus">s-</button>
-				<button onclick="updateStepData(${position}, 0, 1, 0);">s+</button>
+				<button onclick="updateStepData(${gradientID}, ${position}, 0, -1, 0);" class="minus">s-</button>
+				<button onclick="updateStepData(${gradientID}, ${position}, 0, 1, 0);">s+</button>
 			</div>
 			<div>
 				<span class="small readout">${colorData.l}</span>
-				<button onclick="updateStepData(${position}, 0, 0, -1);" class="minus">l-</button>
-				<button onclick="updateStepData(${position}, 0, 0, 1);">l+</button>
+				<button onclick="updateStepData(${gradientID}, ${position}, 0, 0, -1);" class="minus">l-</button>
+				<button onclick="updateStepData(${gradientID}, ${position}, 0, 0, 1);">l+</button>
 			</div>
 			<div class="topMargin">
 				<span class="small readout">${colorData.stepID}</span>
@@ -156,18 +106,27 @@ function makeOneGradientStep(colorData, position, gradientData, gradientID) {
 	return oneStep;
 }
 
-function makeOneValueCSS(colorData, colorName, variablePrefix) {
-	let stepID = '' + colorData.stepID;
-	if (stepID.length === 1) stepID = `0${stepID}`;
-	const color = `hsl(${colorData.h}, ${colorData.s}%, ${colorData.l}%)`;
-	const value = `--${colorName}-${variablePrefix}${stepID}: ${color};`;
-	return value;
+function updateStepData(gradientID, positionID, deltaH = 0, deltaS = 0, deltaL = 0) {
+	const step = gradients[gradientID].steps[positionID];
+	if (deltaH) step.h += deltaH;
+	if (deltaS) step.s += deltaS;
+	if (deltaL) step.l += deltaL;
+
+	step.h = Math.max(Math.min(step.h, 360), 0);
+	step.s = Math.max(Math.min(step.s, 100), 0);
+	step.l = Math.max(Math.min(step.l, 100), 0);
+
+	const rgb = HSLtoRGB({ h: step.h / 360, s: step.s / 100, l: step.l / 100 });
+	// console.log(rgb);
+	const m_color = new mColor(rgb);
+
+	step.lightnessLab = m_color.getLightness('lab');
+	step.lightnessSRGB = m_color.getLightness('srgb');
+
+	refreshGradients();
 }
 
-function makeOneValueJSON(colorData, variablePrefix) {
-	let stepID = '' + colorData.stepID;
-	if (stepID.length === 1) stepID = `0${stepID}`;
-	const color = `hsl(${colorData.h}, ${colorData.s}%, ${colorData.l}%)`;
-	const value = `  ${variablePrefix}${stepID}: '${color}',`;
-	return value;
+function toggleInputs(gradientID) {
+	gradients[gradientID].showInputs = !gradients[gradientID].showInputs;
+	refreshGradients();
 }
