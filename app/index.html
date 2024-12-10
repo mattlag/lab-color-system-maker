@@ -3,52 +3,82 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>LAB Gradient Maker</title>
+		<title>LAB Color System Maker</title>
 		<link rel="stylesheet" href="style.css" />
 		<script src="mColor.js"></script>
 		<script src="gradient.js"></script>
 		<script src="outputs.js"></script>
 		<script src="script.js"></script>
 		<script>
-			const gradients = [];
-
+			let gradients = [];
+			let isShiftDown = false;
 			window.onload = function () {
-				const generateGradient = document.getElementById('generateGradient');
-				generateGradient.addEventListener('click', recalculateAllGradients);
 				gradients.push(new Gradient({ hue: 200, name: 'blue' }));
-				gradients.push(new Gradient({ hue: 100, name: 'green' }));
 				recalculateAllGradients();
+				document.onkeydown = function (e) {
+					if (e.key === 'Shift') isShiftDown = true;
+				};
+				document.onkeyup = function (e) {
+					if (e.key === 'Shift') isShiftDown = false;
+				};
+
+				const dropArea = document.getElementById('dropNote');
+				dropArea.ondragover = function (e) {
+					e.preventDefault();
+					dropArea.style.color = 'blue';
+					dropArea.style.borderColor = 'blue';
+				};
+
+				dropArea.ondragleave = function (e) {
+					e.preventDefault();
+					dropArea.style.color = 'lightgray';
+					dropArea.style.borderColor = 'lightgray';
+				};
+
+				dropArea.ondrop = function (e) {
+					e.preventDefault();
+					dropArea.style.color = 'lightgray';
+					dropArea.style.borderColor = 'lightgray';
+					const file = e.dataTransfer.files[0];
+					// console.log('File:', file);
+					if (file.type === 'application/json') {
+						const reader = new FileReader();
+						reader.onload = function (e) {
+							// console.log('FileReader.onload:', e.target.result);
+							const project = JSON.parse(e.target.result);
+							loadProjectFile(e.target.result);
+						}
+						reader.readAsText(file);
+					}
+				};
 			};
 		</script>
 	</head>
 	<body>
-		<h1>LAB Gradient Maker</h1>
-		<div id="controls">
-			<span>
-				<label for="mainSat">Main Saturation:</label>
-				<input type="number" id="mainSat" min="0" max="100" value="100" />
-			</span>
-
+		<h1>LAB Color System Maker</h1>
+		<div class="controls">
 			<span>
 				<label for="lightnessStart">Lightness Start:</label>
-				<input type="number" id="lightnessStart" min="0" max="100" value="10" />
+				<input type="number" id="lightnessStart" min="0" max="100" value="10" onchange="recalculateAllGradients();" />
 			</span>
-
 			<span>
 				<label for="lightnessStep">Lightness Step:</label>
-				<input type="number" id="lightnessStep" min="1" max="100" value="10" />
+				<input type="number" id="lightnessStep" min="1" max="100" value="10" onchange="recalculateAllGradients();" />
 			</span>
-
-			<span>
-				<label for="variablePrefix">Variable Prefix:</label>
-				<input type="text" id="variablePrefix" value="l" />
-			</span>
-
-			<button id="generateGradient">refresh</button>
+			<button onclick="addGradient();">add gradient</button>
+			<button onclick="saveProjectFile();">save project</button>
+			<span id="dropNote">Drop a project file to load</span>
 		</div>
 		<div id="visual"></div>
 		<br />
-		<button id="addGradient" onclick="addGradient();">add gradient</button>
+
+		<h1>Outputs</h1>
+		<div class="controls">
+			<span>
+				<label for="variablePrefix">Variable Prefix:</label>
+				<input type="text" id="variablePrefix" value="l" onchange="refreshGradients();"/>
+			</span>
+		</div>
 		<br />
 		<textarea id="outputCSS"></textarea>
 		<textarea id="outputJSON"></textarea>

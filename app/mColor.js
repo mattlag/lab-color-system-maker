@@ -458,7 +458,7 @@ function RGBtoHSL(rgb) {
 }
 
 function HSLtoRGB(hsl) {
-	console.log(hsl);
+	// console.log(hsl);
 	// h, s, l : decimals 0.0 to 1.0
 	// r, g, b : integers 0 to 255
 

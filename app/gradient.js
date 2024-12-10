@@ -1,30 +1,64 @@
 class Gradient {
-	constructor({ hue = 0, name = 'color', showInputs = true } = {}) {
+	constructor({ hue = 0, saturation = 100, name = 'color', showInputs = true, steps = [] } = {}) {
+		this.steps = steps;
 		this.hue = hue;
+		this.saturation = saturation;
 		this.name = name;
 		this.showInputs = showInputs;
-		this.steps = [];
 	}
 
-	recalculate(mainSat, lightnessStart, lightnessStep) {
-		console.log('Gradient.recalculate');
-		console.log(this);
-		const hueFraction = this.hue / 360;
-		console.log(`hueFraction = ${hueFraction}`);
-		const satFraction = mainSat / 100;
-		console.log(`satFraction = ${satFraction}`);
+	save() {
+		const result = {
+			name: this.name,
+			hue: this.hue,
+			saturation: this.saturation,
+			showInputs: this.showInputs,
+			steps: this.steps,
+		};
+		return result;
+	}
 
+	recalculate(lightnessStart, lightnessStep) {
+		// console.log('Gradient.recalculate');
+		// console.log(this);
+		const hueFraction = this.hue / 360;
+		// console.log(`hueFraction = ${hueFraction}`);
+		const satFraction = this.saturation / 100;
+		// console.log(`satFraction = ${satFraction}`);
+		this.steps = [];
 		let position = 0;
 		for (let mainLightness = lightnessStart; mainLightness < 100; mainLightness += lightnessStep) {
-			console.log(`\nSTEP ${position}`);
-			console.log(`mainLightness = ${mainLightness}`);
+			// console.log(`\nSTEP ${position}`);
+			// console.log(`mainLightness = ${mainLightness}`);
 
 			const step = makeStepData(hueFraction, satFraction, mainLightness / 100, mainLightness);
 			this.steps[position] = step;
 			position++;
 		}
 
-		console.log(this);
+		// console.log(this);
+	}
+
+	set hue(hue) {
+		this._hue = Number(hue) || 0;
+		this.steps.forEach((step) => {
+			step.h = hue;
+		});
+	}
+
+	get hue() {
+		return this._hue;
+	}
+
+	set saturation(saturation) {
+		this._saturation = Number(saturation) || 100;
+		this.steps.forEach((step) => {
+			step.s = saturation;
+		});
+	}
+
+	get saturation() {
+		return this._saturation;
 	}
 }
 

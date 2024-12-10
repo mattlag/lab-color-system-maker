@@ -4,21 +4,34 @@
 }
 
 body {
-	padding: 20px;
+	padding: 0px 20px;
 }
 
-#controls {
+h1 {
+	display: inline-block;
+	margin: 20px 60px 10px 0px;
+}
+
+.controls {
 	margin-top: 40px;
+	display: inline-block;
 }
 
-#controls span {
+.controls span {
 	display: inline-block;
 	margin-right: 30px;
 }
 
-#controls input[type='number'] {
+.controls input {
 	padding: 0px 0px 0px 2px;
 	width: 60px;
+}
+
+#dropNote {
+	border: 1px dashed lightgray;
+	color: lightgray;
+	padding: 2px 8px;
+	border-radius: 4px;
 }
 
 #visual {
@@ -27,6 +40,7 @@ body {
 	column-gap: 0px;
 	row-gap: 0px;
 	margin-top: 40px;
+	margin-bottom: 100px;
 }
 
 #outputCSS,
@@ -35,10 +49,42 @@ body {
 	padding: 20px;
 	font-size: 1em;
 	width: 400px;
-	height: 400px;
-	margin-top: 40px;
+	height: 500px;
+	margin-top: 10px;
+	margin-bottom: 30px;
 	border: 1px solid lightgray;
 	border-radius: 8px;
+}
+
+.gradientInputs {
+	grid-column: 1 / -1;
+	margin: 10px 0px 0px 0px;
+	padding: 10px 0px 10px 0px;
+	border-top: 1px solid lightgray;
+}
+
+.gradientInputs span {
+	margin-right: 20px;
+}
+
+.gradientAction {
+	display: inline-block;
+	height: 20px;
+	width: 20px;
+	line-height: 18px;
+	padding: 0px;
+	font-weight: bold;
+	color: slategray;
+}
+
+.gradientAction:hover {
+	cursor: pointer;
+	color: black;
+}
+
+.gradientAction[disabled] {
+	color: lightgray;
+	cursor: default;
 }
 
 /* One Step */
