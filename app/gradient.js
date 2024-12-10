@@ -5,6 +5,8 @@ class Gradient {
 		this.saturation = saturation;
 		this.name = name;
 		this.showInputs = showInputs;
+
+		this.recalculateAllStepLightnesses();
 	}
 
 	save() {
@@ -18,8 +20,8 @@ class Gradient {
 		return result;
 	}
 
-	recalculate(lightnessStart, lightnessStep) {
-		// console.log('Gradient.recalculate');
+	initializeSteps(lightnessStart, lightnessStep) {
+		// console.log('Gradient.initializeSteps');
 		// console.log(this);
 		const hueFraction = this.hue / 360;
 		// console.log(`hueFraction = ${hueFraction}`);
@@ -37,6 +39,20 @@ class Gradient {
 		}
 
 		// console.log(this);
+	}
+
+	recalculateStepLightness(stepID) {
+		let step = this.steps[stepID];
+		const rgb = HSLtoRGB({ h: step.h / 360, s: step.s / 100, l: step.l / 100 });
+		const m_color = new mColor(rgb);
+		step.lightnessLab = m_color.getLightness('lab');
+		step.lightnessSRGB = m_color.getLightness('srgb');
+	}
+
+	recalculateAllStepLightnesses() {
+		this.steps.forEach((step) => {
+			this.recalculateStepLightness(step.stepID);
+		});
 	}
 
 	set hue(hue) {

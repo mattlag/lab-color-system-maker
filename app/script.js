@@ -7,7 +7,7 @@ function recalculateAllGradients() {
 
 	console.log(gradients);
 
-	gradients.forEach((gradient) => gradient.recalculate(lightnessStart, lightnessStep));
+	gradients.forEach((gradient) => gradient.initializeSteps(lightnessStart, lightnessStep));
 
 	const columnCount = Math.ceil((100 - lightnessStart) / lightnessStep);
 	const gradientsArea = document.getElementById('visual');
@@ -23,7 +23,7 @@ function addGradient() {
 	console.log(`lightnessStart = ${lightnessStart}`);
 
 	const newGradient = new Gradient();
-	newGradient.recalculate(lightnessStart, lightnessStep);
+	newGradient.initializeSteps(lightnessStart, lightnessStep);
 	gradients.push(newGradient);
 	refreshGradients();
 }
@@ -84,11 +84,13 @@ function refreshGradients() {
 
 function updateGradientHue(gradientID, hue) {
 	gradients[gradientID].hue = hue;
+	gradients[gradientID].recalculateAllStepLightnesses();
 	refreshGradients();
 }
 
 function updateGradientSaturation(gradientID, saturation) {
 	gradients[gradientID].saturation = saturation;
+	gradients[gradientID].recalculateAllStepLightnesses();
 	refreshGradients();
 }
 
@@ -168,7 +170,7 @@ function makeOneGradientStep(colorData, position, gradientData, gradientID) {
 }
 
 function updateStepData(gradientID, positionID, deltaH = 0, deltaS = 0, deltaL = 0) {
-	const modifier = isShiftDown? 10 : 1;
+	const modifier = isShiftDown ? 10 : 1;
 	const step = gradients[gradientID].steps[positionID];
 	if (deltaH) step.h += 1 * deltaH * modifier;
 	if (deltaS) step.s += 1 * deltaS * modifier;
@@ -177,13 +179,7 @@ function updateStepData(gradientID, positionID, deltaH = 0, deltaS = 0, deltaL =
 	step.h = Math.max(Math.min(step.h, 360), 0);
 	step.s = Math.max(Math.min(step.s, 100), 0);
 	step.l = Math.max(Math.min(step.l, 100), 0);
-
-	const rgb = HSLtoRGB({ h: step.h / 360, s: step.s / 100, l: step.l / 100 });
-	// console.log(rgb);
-	const m_color = new mColor(rgb);
-
-	step.lightnessLab = m_color.getLightness('lab');
-	step.lightnessSRGB = m_color.getLightness('srgb');
+	gradients[gradientID].recalculateStepLightness(positionID);
 
 	refreshGradients();
 }
@@ -192,7 +188,6 @@ function toggleInputs(gradientID) {
 	gradients[gradientID].showInputs = !gradients[gradientID].showInputs;
 	refreshGradients();
 }
-
 
 function saveProjectFile() {
 	const project = {
@@ -225,7 +220,7 @@ function loadProjectFile(data) {
 	newProject.gradients.forEach((gradient) => {
 		gradients.push(new Gradient(gradient));
 	});
-	
+
 	const columnCount = Math.ceil((100 - newProject.lightnessStart) / newProject.lightnessStep);
 	const gradientsArea = document.getElementById('visual');
 	gradientsArea.style.gridTemplateColumns = `repeat(${columnCount}, minmax(80px, 1fr))`;
