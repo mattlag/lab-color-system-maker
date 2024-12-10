@@ -42,6 +42,7 @@ class Gradient {
 	}
 
 	recalculateStepLightness(stepIndex) {
+		// console.log('Gradient.recalculateStepLightness');
 		let step = this.steps[stepIndex];
 		// console.log(step);
 		const rgb = HSLtoRGB({ h: step.h / 360, s: step.s / 100, l: step.l / 100 });
@@ -51,6 +52,7 @@ class Gradient {
 	}
 
 	recalculateAllStepLightnesses() {
+		// console.log('Gradient.recalculateAllStepLightnesses');
 		this.steps.forEach((step, stepIndex) => {
 			this.recalculateStepLightness(stepIndex);
 		});

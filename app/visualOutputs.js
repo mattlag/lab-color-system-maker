@@ -1,4 +1,5 @@
 function refreshOutputs() {
+	// console.log('refreshOutputs');
 	const outputCSS = document.getElementById('outputCSS');
 	outputCSS.innerHTML = ':root {\n';
 	const outputJSON = document.getElementById('outputJSON');

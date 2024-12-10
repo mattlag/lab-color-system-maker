@@ -1,10 +1,12 @@
-# Lab Gradient Maker
+# Lab Color System Maker
 
-Given a single (RGB) color, how it's lightness is calculated varies greatly depending on what color space you are using. 
+This tool helps you define a color system, comprised of multiple color gradients with a base hue and saturation. Each color gradient has the same number of steps. The core ability is to be able to fiddle with the lightness of each step until it looks right, or matches another calculated lightness value.
 
-The goal of this tool is to help make a gradient with a given hue and saturation, a certain number of steps, and the ability to fiddle with the lightness of each step until it looks right, or matches another calculated lightness value.
+How lightness is calculated for a given RGB color varies greatly depending on what color space you are using. In addition to controls for adjusting a RGB color (using HSL values), the tool also shows you the lightness of that color from the sRGB and LAB color spaces.
 
-Once the gradient looks good, the gradient is converted to CSS Variables and a JSON object, for easy copy/pasting into a web project.
+Clicking anywhere on the gradient row will toggle the controls for each gradient and gradient step. If you hold down the `Shift` key while adjusting the color, the number will be adjusted by 10 instead of 1.
+
+Once the gradients looks good, they are converted to CSS Variables and a JSON object, for easy copy/pasting into a web project.
 
 
 ## Color spaces

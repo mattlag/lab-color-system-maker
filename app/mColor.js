@@ -5,7 +5,7 @@
 	can perform lightness operations on it based in the
 	LAB or sRGB color space, then return RGB, LAB, or HSL.
 
-	Version 1.2.1
+	Version 1.2.1 
 	---------------------------------------------------
 */
 
@@ -19,14 +19,7 @@ function mColor(mc) {
 	// console.log('mColor: imported\t' + JSON.stringify(this.rgb));
 
 	this.getString = function () {
-		var re =
-			'rgb(' +
-			sanitizeRGB(this.rgb.r) +
-			',' +
-			sanitizeRGB(this.rgb.g) +
-			',' +
-			sanitizeRGB(this.rgb.b) +
-			')';
+		var re = 'rgb(' + sanitizeRGB(this.rgb.r) + ',' + sanitizeRGB(this.rgb.g) + ',' + sanitizeRGB(this.rgb.b) + ')';
 		// var re = 'rgb('+this.rgb.r+','+this.rgb.g+','+this.rgb.b+')';
 
 		return re;
@@ -42,14 +35,12 @@ function mColor(mc) {
 	};
 
 	this.getLAB = function () {
-		if (!this.lab)
-			this.lab = SRGBtoLAB({ r: this.rgb.r, g: this.rgb.g, b: this.rgb.b });
+		if (!this.lab) this.lab = SRGBtoLAB({ r: this.rgb.r, g: this.rgb.g, b: this.rgb.b });
 		return this.lab;
 	};
 
 	this.getHSL = function () {
-		if (!this.hsl)
-			this.hsl = RGBtoHSL({ r: this.rgb.r, g: this.rgb.g, b: this.rgb.b });
+		if (!this.hsl) this.hsl = RGBtoHSL({ r: this.rgb.r, g: this.rgb.g, b: this.rgb.b });
 		return this.hsl;
 	};
 
@@ -60,8 +51,7 @@ function mColor(mc) {
 		type = type || 'srgb';
 		type = type.toLowerCase();
 
-		if (type === 'lab')
-			l = this.getLAB().l / 100; // LAB lightness math done in 0-100
+		if (type === 'lab') l = this.getLAB().l / 100; // LAB lightness math done in 0-100
 		else if (type === 'hsl') l = this.getHSL().l;
 		else {
 			if (!this.rgb.l) this.rgb.l = calculateSRGBlightness(this.rgb);
@@ -134,16 +124,7 @@ function mColor(mc) {
 	this.toString = function () {
 		var re = '';
 
-		re +=
-			'RGB:\t' +
-			this.rgb.r +
-			'\t' +
-			this.rgb.g +
-			'\t' +
-			this.rgb.b +
-			'\t' +
-			this.rgb.l +
-			'\n';
+		re += 'RGB:\t' + this.rgb.r + '\t' + this.rgb.g + '\t' + this.rgb.b + '\t' + this.rgb.l + '\n';
 		re += 'HSL:\t' + this.hsl.h + '\t' + this.hsl.s + '\t' + this.hsl.l + '\n';
 		re += 'LAB:\t' + this.lab.l + '\t' + this.lab.a + '\t' + this.lab.b + '\n';
 

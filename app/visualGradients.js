@@ -1,4 +1,5 @@
 function refreshGradients() {
+	// console.log('refreshGradients');
 	const visual = document.getElementById('visual');
 	visual.innerHTML = '';
 
@@ -42,9 +43,9 @@ function refreshGradients() {
 
 function addGradient() {
 	const lightnessStep = document.getElementById('lightnessStep').value * 1;
-	console.log(`lightnessStep = ${lightnessStep}`);
+	// console.log(`lightnessStep = ${lightnessStep}`);
 	const lightnessStart = document.getElementById('lightnessStart').value * 1;
-	console.log(`lightnessStart = ${lightnessStart}`);
+	// console.log(`lightnessStart = ${lightnessStart}`);
 
 	const newGradient = new Gradient();
 	newGradient.initializeSteps(lightnessStart, lightnessStep);

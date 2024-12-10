@@ -1,11 +1,11 @@
 function recalculateAllGradients() {
-	console.log('recalculateAllGradients');
+	// console.log('recalculateAllGradients');
 	const lightnessStep = document.getElementById('lightnessStep').value * 1;
-	console.log(`lightnessStep = ${lightnessStep}`);
+	// console.log(`lightnessStep = ${lightnessStep}`);
 	const lightnessStart = document.getElementById('lightnessStart').value * 1;
-	console.log(`lightnessStart = ${lightnessStart}`);
+	// console.log(`lightnessStart = ${lightnessStart}`);
 
-	console.log(gradients);
+	// console.log(gradients);
 
 	gradients.forEach((gradient) => gradient.initializeSteps(lightnessStart, lightnessStep));
 
